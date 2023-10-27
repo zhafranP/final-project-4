@@ -1,0 +1,132 @@
+package database
+
+import (
+	"finalProject4/infrastructure/config"
+
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/lib/pq"
+)
+
+var (
+	db  *sql.DB
+	err error
+)
+
+func handleDatabaseConnection() {
+	appConfig := config.GetAppConfig()
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		appConfig.DBHost, appConfig.DBPort, appConfig.DBUser, appConfig.DBPassword, appConfig.DBName,
+	)
+
+	db, err = sql.Open(appConfig.DBDialect, psqlInfo)
+
+	if err != nil {
+		log.Panic("error occured while trying to validate database arguments:", err)
+	}
+
+	err = db.Ping()
+
+	if err != nil {
+		log.Panic("error occured while trying to connect to database:", err)
+	}
+
+}
+
+func createTables() {
+
+	// commentsTable := `
+	// 	CREATE TABLE IF NOT EXISTS comments (
+	// 		id SERIAL PRIMARY KEY,
+	// 		user_id integer NOT NULL,
+	// 		photo_id integer NOT NULL,
+	// 		message text NOT NULL,
+	// 		created_at timestamptz DEFAULT current_timestamp,
+	// 		updated_at timestamptz DEFAULT current_timestamp,
+	// 		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+	// 		FOREIGN KEY (photo_id) REFERENCES photos (id) ON DELETE CASCADE
+	// 	)
+	// `
+
+	usersTable := `
+		CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			full_name text NOT NULL,
+			email text NOT NULL UNIQUE,
+			password text NOT NULL,
+			role text NOT NULL DEFAULT 'customer',
+			balance integer NOT NULL DEFAULT 0,
+			created_at timestamptz DEFAULT current_timestamp,
+	 		updated_at timestamptz DEFAULT current_timestamp
+		)
+		`
+
+	productsTable := `
+		CREATE TABLE IF NOT EXISTS products (
+			id SERIAL PRIMARY KEY,
+			title text NOT NULL,
+			price integer NOT NULL,
+			stock integer NOT NULL,
+			created_at timestamptz DEFAULT current_timestamp,
+	 		updated_at timestamptz DEFAULT current_timestamp,
+			user_id integer REFERENCES users (id)
+				ON DELETE CASCADE
+		)
+	`
+
+	categoriesTable := `
+		CREATE TABLE IF NOT EXISTS categories (
+			id SERIAL PRIMARY KEY,
+			type text NOT NULL,
+			sold_product_amount integer NOT NULL,
+			created_at timestamptz DEFAULT current_timestamp,
+	 		updated_at timestamptz DEFAULT current_timestamp
+		)
+	`
+
+	transactionHistoriesTable := `
+		CREATE TABLE IF NOT EXISTS transaction_histories (
+			id SERIAL PRIMARY KEY,
+			product_id integer REFERENCES products(id)
+				ON DELETE CASCADE,
+			user_id integer REFERENCES users(id)
+				ON DELETE CASCADE,
+			quantity integer NOT NULL,
+			total_price integer NOT NULL,
+			created_at timestamptz DEFAULT current_timestamp,
+	 		updated_at timestamptz DEFAULT current_timestamp
+		)
+	`
+	_, err = db.Exec(usersTable)
+	if err != nil {
+		log.Panic("error occured while trying to create order table:", err)
+	}
+	_, err = db.Exec(productsTable)
+	if err != nil {
+		log.Panic("error occured while trying to create order table:", err)
+	}
+	_, err = db.Exec(categoriesTable)
+	if err != nil {
+		log.Panic("error occured while trying to create order table:", err)
+	}
+	_, err = db.Exec(transactionHistoriesTable)
+	if err != nil {
+		log.Panic("error occured while trying to create order table:", err)
+	}
+
+}
+
+func InitiliazeDatabase() {
+	handleDatabaseConnection()
+	createTables()
+}
+
+func GetDatabaseInstance() *sql.DB {
+	if db == nil {
+		log.Panic("database instance is still nill!!!")
+	}
+
+	return db
+}
