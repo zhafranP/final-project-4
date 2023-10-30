@@ -14,22 +14,22 @@ func StartApp() {
 	config.LoadAppConfig()
 	database.InitiliazeDatabase()
 	db := database.GetDatabaseInstance()
+	database.SeedAdmin(db)
 
 	userRepo := user_pg.NewUserPG(db)
 	userService := service.NewUserService(userRepo)
 	userHandler := NewUserHandler(userService)
 
 	r := gin.Default()
-	users := r.Group("users")
-
-	r.POST("/users/register", userHandler.CreateUser)
-	r.POST("/users/login", userHandler.Login)
-
-	users.Use(middlewares.Authentication())
+	users := r.Group("/users")
 	{
-		users.PATCH("/topup", userHandler.Topup)
+		users.POST("/register", userHandler.CreateUser)
+		users.POST("/login", userHandler.Login)
+		users.Use(middlewares.Authentication())
+		{
+			users.PATCH("/topup", userHandler.Topup)
+		}
 	}
 
 	r.Run(":" + config.GetAppConfig().Port)
-
 }
