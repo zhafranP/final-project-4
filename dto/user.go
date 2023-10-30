@@ -27,7 +27,7 @@ type LoginResponse struct {
 }
 
 type TopUpRequest struct {
-	ID      int `json:"id" `
+	ID      int `json:"id"`
 	Balance int `json:"balance" validate:"required,number"`
 }
 

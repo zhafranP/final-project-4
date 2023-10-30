@@ -1,4 +1,4 @@
-# MyGram Golang
+# Toko Belanja Golang
 Hacktiv8 - GLNG-KS07 - Kelompok 3<br />
 - Zhafran Panggomgomi
 - Andry

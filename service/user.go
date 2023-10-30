@@ -90,8 +90,8 @@ func (us *userService) Topup(u dto.TopUpRequest) (*dto.TopUpResponse, errs.Error
 	if u.Balance < 0 {
 		return nil, errs.NewBadRequest("invalid topup")
 	}
-	if currentBalance+u.Balance > 200000000 {
-		return nil, errs.NewBadRequest("Your balance cannot exceed 200000000")
+	if currentBalance+u.Balance > 100000000 {
+		return nil, errs.NewBadRequest("Your balance cannot exceed 100,000,000")
 	}
 
 	topup, err := us.userRepo.TopUp(u)
