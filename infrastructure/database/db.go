@@ -37,19 +37,6 @@ func handleDatabaseConnection() {
 
 func createTables() {
 
-	// commentsTable := `
-	// 	CREATE TABLE IF NOT EXISTS comments (
-	// 		id SERIAL PRIMARY KEY,
-	// 		user_id integer NOT NULL,
-	// 		photo_id integer NOT NULL,
-	// 		message text NOT NULL,
-	// 		created_at timestamptz DEFAULT current_timestamp,
-	// 		updated_at timestamptz DEFAULT current_timestamp,
-	// 		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-	// 		FOREIGN KEY (photo_id) REFERENCES photos (id) ON DELETE CASCADE
-	// 	)
-	// `
-
 	usersTable := `
 		CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
