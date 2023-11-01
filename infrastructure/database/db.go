@@ -67,7 +67,7 @@ func createTables() {
 		CREATE TABLE IF NOT EXISTS categories (
 			id SERIAL PRIMARY KEY,
 			type text NOT NULL,
-			sold_product_amount integer NOT NULL,
+			sold_product_amount integer NOT NULL DEFAULT 0,
 			created_at timestamptz DEFAULT current_timestamp,
 	 		updated_at timestamptz DEFAULT current_timestamp
 		)
