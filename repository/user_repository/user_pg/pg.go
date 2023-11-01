@@ -17,7 +17,7 @@ const (
 	`
 
 	login = `
-	SELECT id,password FROM users
+	SELECT id, full_name, email, password, role, balance FROM users
 	WHERE email = $1
 	`
 
@@ -76,7 +76,7 @@ func (userPG *userPG) Login(email string) (*entity.User, errs.Error) {
 	var user entity.User
 
 	err := userPG.db.QueryRow(login, email).Scan(
-		&user.ID, &user.Password,
+		&user.ID, &user.FullName, &user.Email, &user.Password, &user.Role, &user.Balance,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
