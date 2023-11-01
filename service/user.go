@@ -66,7 +66,7 @@ func (us *userService) Login(u dto.LoginRequest) (*dto.LoginResponse, errs.Error
 
 	comparePassword := helpers.ComparePass([]byte(user.Password), []byte(u.Password))
 	if comparePassword {
-		token, err := helpers.GenerateToken(user.ID, u.Email)
+		token, err := helpers.GenerateToken(user.ID, user.Email, user.Role)
 		if err != nil {
 			return nil, errs.NewInternalServerError(err.Error())
 		}

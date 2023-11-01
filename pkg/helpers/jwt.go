@@ -10,10 +10,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateToken(id int, email string) (string, error) {
+func GenerateToken(id int, email string, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":    id,
 		"email": email,
+		"role": role,
 	})
 
 	tokenString, err := token.SignedString([]byte(config.GetAppConfig().JWTSecretKey))
