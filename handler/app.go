@@ -4,8 +4,9 @@ import (
 	"finalProject4/infrastructure/config"
 	"finalProject4/infrastructure/database"
 	middlewares "finalProject4/pkg/middleware"
-	"finalProject4/repository/user_repository/user_pg"
 	"finalProject4/service"
+	"finalProject4/repository/user_repository/user_pg"
+	"finalProject4/repository/category_repository/category_pg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,10 @@ func StartApp() {
 	userService := service.NewUserService(userRepo)
 	userHandler := NewUserHandler(userService)
 
+	categoryRepo := category_pg.NewCategoryPG(db)
+	categoryService := service.NewCategoryService(categoryRepo)
+	categoryHandler := NewCategoryHandler(categoryService)
+
 	r := gin.Default()
 	users := r.Group("/users")
 	{
@@ -28,6 +33,15 @@ func StartApp() {
 		users.Use(middlewares.Authentication())
 		{
 			users.PATCH("/topup", userHandler.Topup)
+		}
+	}
+
+	categories := r.Group("/categories")
+	{
+		categories.Use(middlewares.Authentication())
+		{
+			categories.Use(middlewares.AdminAuthorization())
+			categories.POST("/", categoryHandler.CreateCategory)
 		}
 	}
 
