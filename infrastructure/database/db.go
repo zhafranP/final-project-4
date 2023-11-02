@@ -50,24 +50,24 @@ func createTables() {
 		)
 		`
 
+	categoriesTable := `
+		CREATE TABLE IF NOT EXISTS categories (
+			id SERIAL PRIMARY KEY,
+			type text NOT NULL,
+			sold_product_amount integer DEFAULT 0,
+			created_at timestamptz DEFAULT current_timestamp,
+	 		updated_at timestamptz DEFAULT current_timestamp
+		)
+	`
+
 	productsTable := `
 		CREATE TABLE IF NOT EXISTS products (
 			id SERIAL PRIMARY KEY,
 			title text NOT NULL,
 			price integer NOT NULL,
 			stock integer NOT NULL,
-			category_id integer REFERENCES categories (id)
-				ON DELETE CASCADE
-			created_at timestamptz DEFAULT current_timestamp,
-	 		updated_at timestamptz DEFAULT current_timestamp,
-		)
-	`
-
-	categoriesTable := `
-		CREATE TABLE IF NOT EXISTS categories (
-			id SERIAL PRIMARY KEY,
-			type text NOT NULL,
-			sold_product_amount integer DEFAULT 0,
+			category_id integer REFERENCES categories(id)
+				ON DELETE CASCADE,
 			created_at timestamptz DEFAULT current_timestamp,
 	 		updated_at timestamptz DEFAULT current_timestamp
 		)
@@ -90,11 +90,11 @@ func createTables() {
 	if err != nil {
 		log.Panic("error occured while trying to create order table:", err)
 	}
-	_, err = db.Exec(productsTable)
+	_, err = db.Exec(categoriesTable)
 	if err != nil {
 		log.Panic("error occured while trying to create order table:", err)
 	}
-	_, err = db.Exec(categoriesTable)
+	_, err = db.Exec(productsTable)
 	if err != nil {
 		log.Panic("error occured while trying to create order table:", err)
 	}
