@@ -7,4 +7,5 @@ import (
 
 type Repository interface {
 	CreateCategory(categoryPayload *dto.NewCategoryRequest) (*dto.NewCategoryResponse, errs.Error)
+	GetCategories() (*dto.GetCategories, errs.Error)
 }

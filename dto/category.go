@@ -13,3 +13,24 @@ type NewCategoryResponse struct {
 	CreatedAt         time.Time `json:"created_time"`
 }
 
+type GetCategories struct {
+	Data []GetCategoriesWithProducts `json:"data"`
+}
+
+type GetCategoriesWithProducts struct {
+	ID                int                   `json:"id"`
+	Type              string                `json:"type"`
+	SoldProductAmount int                   `json:"sold_product_amount"`
+	CreatedAt         time.Time             `json:"created_at"`
+	UpdatedAt         time.Time             `json:"updated_at"`
+	Products          []GetProductsCategory `json:"Products"`
+}
+
+type GetProductsCategory struct {
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Price     int       `json:"price"`
+	Stock     int       `json:"stock"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

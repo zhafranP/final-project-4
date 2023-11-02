@@ -13,6 +13,7 @@ type categoryService struct {
 
 type CategoryService interface {
 	CreateCategory(categoryPayload *dto.NewCategoryRequest) (*dto.NewCategoryResponse, errs.Error)
+	GetCategories() (*dto.GetCategories, errs.Error)
 }
 
 func NewCategoryService(categoryRepo category_repository.Repository) CategoryService {
@@ -29,4 +30,12 @@ func (cs *categoryService) CreateCategory(categoryPayload *dto.NewCategoryReques
 		return nil, err
 	}
 	return res, nil
+}
+
+func (cs *categoryService) GetCategories() (*dto.GetCategories, errs.Error) {
+	categories, err := cs.categoryRepo.GetCategories()
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
 }

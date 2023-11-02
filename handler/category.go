@@ -4,6 +4,7 @@ import (
 	"finalProject4/dto"
 	"finalProject4/pkg/errs"
 	"finalProject4/service"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,4 +32,14 @@ func (ch *categoryHandler) CreateCategory(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, res)
+}
+
+func (ch *categoryHandler) GetCategories(c *gin.Context) {
+	res, err := ch.categoryService.GetCategories()
+	fmt.Println(res)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusCreated, res.Data)
 }
