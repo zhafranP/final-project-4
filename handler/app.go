@@ -4,9 +4,10 @@ import (
 	"finalProject4/infrastructure/config"
 	"finalProject4/infrastructure/database"
 	middlewares "finalProject4/pkg/middleware"
-	"finalProject4/service"
-	"finalProject4/repository/user_repository/user_pg"
 	"finalProject4/repository/category_repository/category_pg"
+	"finalProject4/repository/product_repository/product_pg"
+	"finalProject4/repository/user_repository/user_pg"
+	"finalProject4/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,10 @@ func StartApp() {
 	categoryRepo := category_pg.NewCategoryPG(db)
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryHandler := NewCategoryHandler(categoryService)
+
+	productRepo := product_pg.NewProductPG(db)
+	productService := service.NewProductService(productRepo)
+	productHandler := NewProductHandler(productService)
 
 	r := gin.Default()
 	users := r.Group("/users")
@@ -43,6 +48,17 @@ func StartApp() {
 			categories.Use(middlewares.AdminAuthorization())
 			categories.GET("/", categoryHandler.GetCategories)
 			categories.POST("/", categoryHandler.CreateCategory)
+		}
+	}
+
+	products := r.Group("/products")
+	{
+		products.Use(middlewares.Authentication())
+		{
+			products.POST("", middlewares.AdminAuthorization(), productHandler.CreateProduct)
+			products.PUT("/:productId", middlewares.AdminAuthorization(), productHandler.UpdateProduct)
+			products.GET("", productHandler.GetProduct)
+			products.DELETE("/:productId", middlewares.AdminAuthorization(), productHandler.DeleteProduct)
 		}
 	}
 
