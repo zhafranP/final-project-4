@@ -56,10 +56,10 @@ func createTables() {
 			title text NOT NULL,
 			price integer NOT NULL,
 			stock integer NOT NULL,
+			category_id integer REFERENCES categories (id)
+				ON DELETE CASCADE
 			created_at timestamptz DEFAULT current_timestamp,
 	 		updated_at timestamptz DEFAULT current_timestamp,
-			user_id integer REFERENCES users (id)
-				ON DELETE CASCADE
 		)
 	`
 
