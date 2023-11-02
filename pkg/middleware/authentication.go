@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"finalProject4/pkg/helpers"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,6 @@ func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		tokenClaims, err := helpers.VerifyToken(c)
-		fmt.Println(tokenClaims)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
