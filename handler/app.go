@@ -49,6 +49,7 @@ func StartApp() {
 			categories.GET("/", categoryHandler.GetCategories)
 			categories.POST("/", categoryHandler.CreateCategory)
 			categories.PATCH("/:categoryId", categoryHandler.UpdateCategory)
+			categories.DELETE("/:categoryId", categoryHandler.DeleteCategory)
 		}
 	}
 

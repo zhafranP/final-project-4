@@ -42,7 +42,7 @@ func (ch *categoryHandler) GetCategories(c *gin.Context) {
 		c.AbortWithStatusJSON(err.Status(), err)
 		return
 	}
-	c.JSON(http.StatusCreated, res.Data)
+	c.JSON(http.StatusOK, res.Data)
 }
 
 func (ch *categoryHandler) UpdateCategory(c *gin.Context) {
@@ -59,5 +59,18 @@ func (ch *categoryHandler) UpdateCategory(c *gin.Context) {
 		c.AbortWithStatusJSON(err.Status(), err)
 		return
 	}
-	c.JSON(http.StatusCreated, res)
+	c.JSON(http.StatusOK, res)
+}
+
+func (ch *categoryHandler) DeleteCategory(c *gin.Context) {
+	param := c.Param("categoryId")
+	categoryId, _ := strconv.Atoi(param)
+	err := ch.categoryService.DeleteCategory(categoryId)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "category has been successfully deleted",
+	})
 }

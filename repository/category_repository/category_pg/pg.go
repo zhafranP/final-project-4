@@ -25,6 +25,10 @@ const (
 	UPDATE categories SET type = $1 WHERE id = $2
 	RETURNING id, type, sold_product_amount, updated_at
 	`
+
+	deleteCategoryQuery = `
+	DELETE FROM categories WHERE id = $1
+	`
 )
 
 type categoryPG struct {
@@ -93,4 +97,12 @@ func (categoryPG *categoryPG) UpdateCategory(categoryId int, categoryPayload *dt
 		return nil, errs.NewInternalServerError(err.Error())
 	}
 	return &res, nil
+}
+
+func (categoryPG *categoryPG) DeleteCategory(categoryId int) errs.Error {
+	_, err := categoryPG.db.Exec(deleteCategoryQuery, categoryId)
+	if err != nil {
+		return errs.NewInternalServerError(err.Error())
+	}
+	return nil
 }
