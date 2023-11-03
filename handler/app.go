@@ -48,6 +48,7 @@ func StartApp() {
 			categories.Use(middlewares.AdminAuthorization())
 			categories.GET("/", categoryHandler.GetCategories)
 			categories.POST("/", categoryHandler.CreateCategory)
+			categories.PATCH("/:categoryId", categoryHandler.UpdateCategory)
 		}
 	}
 

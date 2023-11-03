@@ -6,6 +6,7 @@ import (
 	"finalProject4/service"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,4 +43,21 @@ func (ch *categoryHandler) GetCategories(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, res.Data)
+}
+
+func (ch *categoryHandler) UpdateCategory(c *gin.Context) {
+	var category dto.NewCategoryRequest
+	if err := c.ShouldBindJSON(&category); err != nil {
+		errBind := errs.NewUnprocessibleEntityError("invalid json request body")
+		c.AbortWithStatusJSON(errBind.Status(), errBind)
+		return
+	}
+	param := c.Param("categoryId")
+	categoryId, _ := strconv.Atoi(param)
+	res, err := ch.categoryService.UpdateCategory(categoryId, &category)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusCreated, res)
 }
