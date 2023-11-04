@@ -48,6 +48,8 @@ func StartApp() {
 			categories.Use(middlewares.AdminAuthorization())
 			categories.GET("/", categoryHandler.GetCategories)
 			categories.POST("/", categoryHandler.CreateCategory)
+			categories.PATCH("/:categoryId", categoryHandler.UpdateCategory)
+			categories.DELETE("/:categoryId", categoryHandler.DeleteCategory)
 		}
 	}
 
@@ -55,10 +57,13 @@ func StartApp() {
 	{
 		products.Use(middlewares.Authentication())
 		{
-			products.POST("", middlewares.AdminAuthorization(), productHandler.CreateProduct)
-			products.PUT("/:productId", middlewares.AdminAuthorization(), productHandler.UpdateProduct)
-			products.GET("", productHandler.GetProduct)
-			products.DELETE("/:productId", middlewares.AdminAuthorization(), productHandler.DeleteProduct)
+			products.GET("/", productHandler.GetProduct)
+			products.Use(middlewares.AdminAuthorization())
+			{
+				products.POST("/", productHandler.CreateProduct)
+				products.PUT("/:productId", productHandler.UpdateProduct)
+				products.DELETE("/:productId", productHandler.DeleteProduct)
+			}
 		}
 	}
 

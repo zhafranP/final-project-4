@@ -10,7 +10,14 @@ type NewCategoryResponse struct {
 	ID                int       `json:"id"`
 	Type              string    `json:"type"`
 	SoldProductAmount int       `json:"sold_product_amount"`
-	CreatedAt         time.Time `json:"created_time"`
+	CreatedAt         time.Time `json:"updated_at"`
+}
+
+type UpdateCategoryResponse struct {
+	ID                int       `json:"id"`
+	Type              string    `json:"type"`
+	SoldProductAmount int       `json:"sold_product_amount"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 type GetCategories struct {

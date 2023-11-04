@@ -13,7 +13,9 @@ type categoryService struct {
 
 type CategoryService interface {
 	CreateCategory(categoryPayload *dto.NewCategoryRequest) (*dto.NewCategoryResponse, errs.Error)
+	UpdateCategory(categoryId int, categoryPayload *dto.NewCategoryRequest) (*dto.UpdateCategoryResponse, errs.Error)
 	GetCategories() (*dto.GetCategories, errs.Error)
+	DeleteCategory(categoryId int) errs.Error
 }
 
 func NewCategoryService(categoryRepo category_repository.Repository) CategoryService {
@@ -38,4 +40,24 @@ func (cs *categoryService) GetCategories() (*dto.GetCategories, errs.Error) {
 		return nil, err
 	}
 	return categories, nil
+}
+
+func (cs *categoryService) UpdateCategory(categoryId int, categoryPayload *dto.NewCategoryRequest) (*dto.UpdateCategoryResponse, errs.Error) {
+	validateErr := helpers.ValidateStruct(categoryPayload)
+	if validateErr != nil {
+		return nil, validateErr
+	}
+	res, err := cs.categoryRepo.UpdateCategory(categoryId, categoryPayload)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (cs *categoryService) DeleteCategory(categoryId int) errs.Error {
+	err := cs.categoryRepo.DeleteCategory(categoryId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

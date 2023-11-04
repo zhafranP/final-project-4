@@ -5,6 +5,7 @@ import (
 	"finalProject4/dto"
 	"finalProject4/pkg/errs"
 	"finalProject4/repository/category_repository"
+	"strconv"
 )
 
 const (
@@ -18,6 +19,15 @@ const (
 	`
 	getProductsByCategoryQuery = `
 	SELECT * FROM products WHERE category_id = $1
+	`
+
+	updateCategoryQuery = `
+	UPDATE categories SET type = $1 WHERE id = $2
+	RETURNING id, type, sold_product_amount, updated_at
+	`
+
+	deleteCategoryQuery = `
+	DELETE FROM categories WHERE id = $1
 	`
 )
 
@@ -73,4 +83,26 @@ func (categoryPG *categoryPG) GetCategories() (*dto.GetCategories, errs.Error) {
 		categories.Products = nil
 	}
 	return &res, nil
+}
+
+func (categoryPG *categoryPG) UpdateCategory(categoryId int, categoryPayload *dto.NewCategoryRequest) (*dto.UpdateCategoryResponse, errs.Error) {
+	var res dto.UpdateCategoryResponse
+	err := categoryPG.db.QueryRow(updateCategoryQuery, categoryPayload.Type, categoryId).Scan(
+		&res.ID, &res.Type, &res.SoldProductAmount, &res.UpdatedAt,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("Category with id: " + strconv.Itoa(categoryId) + " does not exist")
+		}
+		return nil, errs.NewInternalServerError(err.Error())
+	}
+	return &res, nil
+}
+
+func (categoryPG *categoryPG) DeleteCategory(categoryId int) errs.Error {
+	_, err := categoryPG.db.Exec(deleteCategoryQuery, categoryId)
+	if err != nil {
+		return errs.NewInternalServerError(err.Error())
+	}
+	return nil
 }
