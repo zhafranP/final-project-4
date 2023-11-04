@@ -120,12 +120,12 @@ func (productPG *productPG) GetProducts() (*dto.GetProductResponse, errs.Error) 
 }
 
 func (productPG *productPG) DeleteProducts(id int) errs.Error {
-	_, err := productPG.db.Exec(deleteProduct)
+	_, err := productPG.db.Exec(deleteProduct, id)
 	if err != nil {
-		return nil
+		return errs.NewInternalServerError(err.Error())
 	}
 
-	return errs.NewInternalServerError(err.Error())
+	return nil
 }
 
 func (productPG *productPG) CategoryIdExist(id int) (bool, errs.Error) {
