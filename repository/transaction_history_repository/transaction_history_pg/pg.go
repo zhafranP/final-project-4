@@ -39,7 +39,15 @@ const (
 	updateCategoryQuery = `
 	UPDATE categories set sold_product_amount = sold_product_amount + $1 WHERE id = $2
 	`
-	
+
+	getTransactionUserQuery = `
+	SELECT 
+	transaction_histories.id, product_id, user_id, quantity, total_price, 
+	products.id, products.title, products.price, products.stock, products.category_id, products.created_at, products.updated_at
+	FROM transaction_histories
+	LEFT JOIN products ON transaction_histories.product_id = products.id
+	WHERE transaction_histories.user_id = $1
+	`
 )
 
 func NewTransactionPG(db *sql.DB) transaction_history_repository.Repository {
@@ -69,11 +77,11 @@ func (transactionPG *transactionPG) CreateTransaction(transactionPayload *dto.Ne
 	}
 
 	//Logic Check
-	if (product.Stock - transactionPayload.Quantity < 5) {
+	if product.Stock-transactionPayload.Quantity < 5 {
 		return nil, errs.NewBadRequest("quantity requested exceed product stock")
 	}
 	totalPrice := transactionPayload.Quantity * product.Price
-	if (user.Balance < totalPrice) {
+	if user.Balance < totalPrice {
 		return nil, errs.NewBadRequest("insufficient user balance, total price: " + strconv.Itoa(totalPrice))
 	}
 
@@ -110,9 +118,34 @@ func (transactionPG *transactionPG) CreateTransaction(transactionPayload *dto.Ne
 		return nil, errs.NewInternalServerError(err.Error())
 	}
 	res := dto.NewTransactionHistoryResponse{
-		TotalPrice: totalPrice,
-		Quantity: transactionPayload.Quantity,
+		TotalPrice:   totalPrice,
+		Quantity:     transactionPayload.Quantity,
 		ProductTitle: product.Title,
+	}
+	return &res, nil
+}
+
+func (transactionPG *transactionPG) GetTransactionUser(userId int) (*[]dto.GetTransactionUser, errs.Error) {
+	var res []dto.GetTransactionUser
+	
+	transactions, err := transactionPG.db.Query(getTransactionUserQuery, userId)
+	if err != nil {
+		return nil, errs.NewInternalServerError(err.Error())
+	}
+	defer transactions.Close()
+
+	for transactions.Next() {
+		var transaction dto.GetTransactionUser
+		var product entity.Product
+		err := transactions.Scan(
+			&transaction.ID, &transaction.ProductID, &transaction.UserID, &transaction.Quantity, &transaction.TotalPrice,
+			&product.ID, &product.Title, &product.Price, &product.Stock, &product.CategoryID, &product.CreatedAt, &product.UpdatedAt,
+		)
+		if err != nil {
+			return nil, errs.NewInternalServerError(err.Error())
+		}
+		transaction.Product = product
+		res = append(res, transaction)
 	}
 	return &res, nil
 }

@@ -7,4 +7,5 @@ import (
 
 type Repository interface {
 	CreateTransaction(transactionPayload *dto.NewTransactionHistoryRequest) (*dto.NewTransactionHistoryResponse, errs.Error)
+	GetTransactionUser(userId int) (*[]dto.GetTransactionUser, errs.Error)
 }

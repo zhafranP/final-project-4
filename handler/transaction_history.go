@@ -36,3 +36,14 @@ func (th *transactionHandler) CreateTransaction(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, res)
 }
+
+func (th *transactionHandler) GetTransactionUser(c *gin.Context) {
+	jwtClaims := c.MustGet("user").(jwt.MapClaims)
+	userId := int(jwtClaims["id"].(float64))
+	res, err := th.transactionService.GetTransactionUser(userId)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

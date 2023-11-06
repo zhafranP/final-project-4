@@ -1,5 +1,7 @@
 package dto
 
+import "finalProject4/entity"
+
 type NewTransactionHistoryRequest struct {
 	UserID    int
 	ProductID int `json:"product_id" validate:"required"`
@@ -15,4 +17,13 @@ type NewTransactionHistoryResponse struct {
 type TransactionHistoryBill struct {
 	Message         string                        `json:"message"`
 	TransactionBill NewTransactionHistoryResponse `json:"transaction_bill"`
+}
+
+type GetTransactionUser struct {
+	ID         int `json:"id"`
+	ProductID  int `json:"product_id"`
+	UserID     int `json:"user_id"`
+	Quantity   int `json:"quantity"`
+	TotalPrice int `json:"total_price"`
+	Product    entity.Product
 }

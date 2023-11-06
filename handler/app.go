@@ -77,6 +77,7 @@ func StartApp() {
 		transactions.Use(middlewares.Authentication())
 		{
 			transactions.POST("/", transactionHandler.CreateTransaction)
+			transactions.GET("/my-transactions", transactionHandler.GetTransactionUser)
 		}
 	}
 
