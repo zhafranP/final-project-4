@@ -43,7 +43,7 @@ func (ph *productHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusOK, resp.Data)
 }
 
 func (ph *productHandler) UpdateProduct(c *gin.Context) {
