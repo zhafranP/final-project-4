@@ -8,7 +8,7 @@ type User struct {
 	Email     string
 	Password  string
 	Role      string
-	Balance   string
+	Balance   int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

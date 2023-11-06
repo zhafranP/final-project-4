@@ -6,6 +6,7 @@ import (
 	middlewares "finalProject4/pkg/middleware"
 	"finalProject4/repository/category_repository/category_pg"
 	"finalProject4/repository/product_repository/product_pg"
+	"finalProject4/repository/transaction_history_repository/transaction_history_pg"
 	"finalProject4/repository/user_repository/user_pg"
 	"finalProject4/service"
 
@@ -29,6 +30,10 @@ func StartApp() {
 	productRepo := product_pg.NewProductPG(db)
 	productService := service.NewProductService(productRepo)
 	productHandler := NewProductHandler(productService)
+
+	transactionRepo := transaction_history_pg.NewTransactionPG(db)
+	transactionService := service.NewTransactionService(transactionRepo)
+	transactionHandler := NewTransactionHandler(transactionService)
 
 	r := gin.Default()
 	users := r.Group("/users")
@@ -64,6 +69,14 @@ func StartApp() {
 				products.PUT("/:productId", productHandler.UpdateProduct)
 				products.DELETE("/:productId", productHandler.DeleteProduct)
 			}
+		}
+	}
+
+	transactions := r.Group("/transactions")
+	{
+		transactions.Use(middlewares.Authentication())
+		{
+			transactions.POST("/", transactionHandler.CreateTransaction)
 		}
 	}
 
