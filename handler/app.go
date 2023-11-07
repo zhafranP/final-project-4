@@ -78,6 +78,8 @@ func StartApp() {
 		{
 			transactions.POST("/", transactionHandler.CreateTransaction)
 			transactions.GET("/my-transactions", transactionHandler.GetTransactionUser)
+			transactions.Use(middlewares.AdminAuthorization())
+			transactions.GET("/user-transactions", transactionHandler.GetTransactionAdmin)
 		}
 	}
 

@@ -14,6 +14,7 @@ type transactionService struct {
 type TransactionService interface {
 	CreateTransaction(transactionPayload *dto.NewTransactionHistoryRequest) (*dto.TransactionHistoryBill, errs.Error)
 	GetTransactionUser(userId int) (*[]dto.GetTransactionUser, errs.Error)
+	GetTransactionAdmin() (*[]dto.GetTransactionAdmin, errs.Error)
 }
 
 func NewTransactionService(transactionRepo transaction_history_repository.Repository) TransactionService {
@@ -30,7 +31,7 @@ func (ts *transactionService) CreateTransaction(transactionPayload *dto.NewTrans
 		return nil, err
 	}
 	res := dto.TransactionHistoryBill{
-		Message: "You have successfully purchased the product",
+		Message:         "You have successfully purchased the product",
 		TransactionBill: *transaction,
 	}
 	return &res, nil
@@ -38,6 +39,14 @@ func (ts *transactionService) CreateTransaction(transactionPayload *dto.NewTrans
 
 func (ts *transactionService) GetTransactionUser(userId int) (*[]dto.GetTransactionUser, errs.Error) {
 	transactions, err := ts.transactionRepo.GetTransactionUser(userId)
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
+func (ts *transactionService) GetTransactionAdmin() (*[]dto.GetTransactionAdmin, errs.Error) {
+	transactions, err := ts.transactionRepo.GetTransactionAdmin()
 	if err != nil {
 		return nil, err
 	}

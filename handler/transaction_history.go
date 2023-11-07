@@ -47,3 +47,12 @@ func (th *transactionHandler) GetTransactionUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+func (th *transactionHandler) GetTransactionAdmin(c *gin.Context) {
+	res, err := th.transactionService.GetTransactionAdmin()
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

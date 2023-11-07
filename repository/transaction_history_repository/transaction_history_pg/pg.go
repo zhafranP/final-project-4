@@ -48,6 +48,16 @@ const (
 	LEFT JOIN products ON transaction_histories.product_id = products.id
 	WHERE transaction_histories.user_id = $1
 	`
+
+	getTransactionAdminQuery = `
+	SELECT
+	transaction_histories.id, product_id, user_id, quantity, total_price, 
+	products.id, products.title, products.price, products.stock, products.category_id, products.created_at, products.updated_at, 
+	users.id, users.email, users.full_name, users.balance, users.created_at, users.updated_at
+	FROM transaction_histories
+	LEFT JOIN products ON transaction_histories.product_id = products.id
+	LEFT JOIN users ON transaction_histories.user_id = users.id;
+	`
 )
 
 func NewTransactionPG(db *sql.DB) transaction_history_repository.Repository {
@@ -145,6 +155,34 @@ func (transactionPG *transactionPG) GetTransactionUser(userId int) (*[]dto.GetTr
 			return nil, errs.NewInternalServerError(err.Error())
 		}
 		transaction.Product = product
+		res = append(res, transaction)
+	}
+	return &res, nil
+}
+
+func (transactionPG *transactionPG) GetTransactionAdmin() (*[]dto.GetTransactionAdmin, errs.Error) {
+	var res []dto.GetTransactionAdmin
+	
+	transactions, err := transactionPG.db.Query(getTransactionAdminQuery)
+	if err != nil {
+		return nil, errs.NewInternalServerError(err.Error())
+	}
+	defer transactions.Close()
+
+	for transactions.Next() {
+		var transaction dto.GetTransactionAdmin
+		var product entity.Product
+		var user dto.TransactionUser
+		err := transactions.Scan(
+			&transaction.ID, &transaction.ProductID, &transaction.UserID, &transaction.Quantity, &transaction.TotalPrice,
+			&product.ID, &product.Title, &product.Price, &product.Stock, &product.CategoryID, &product.CreatedAt, &product.UpdatedAt,
+			&user.ID, &user.Email, &user.FullName, &user.Balance, &user.CreatedAt, &user.UpdatedAt,
+		)
+		if err != nil {
+			return nil, errs.NewInternalServerError(err.Error())
+		}
+		transaction.Product = product
+		transaction.User = user
 		res = append(res, transaction)
 	}
 	return &res, nil

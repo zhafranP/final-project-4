@@ -1,6 +1,9 @@
 package dto
 
-import "finalProject4/entity"
+import (
+	"finalProject4/entity"
+	"time"
+)
 
 type NewTransactionHistoryRequest struct {
 	UserID    int
@@ -26,4 +29,23 @@ type GetTransactionUser struct {
 	Quantity   int `json:"quantity"`
 	TotalPrice int `json:"total_price"`
 	Product    entity.Product
+}
+
+type GetTransactionAdmin struct {
+	ID         int `json:"id"`
+	ProductID  int `json:"product_id"`
+	UserID     int `json:"user_id"`
+	Quantity   int `json:"quantity"`
+	TotalPrice int `json:"total_price"`
+	Product    entity.Product
+	User       TransactionUser
+}
+
+type TransactionUser struct {
+	ID        int    `json:"id"`
+	Email     string `json:"email"`
+	FullName  string `json:"full_name"`
+	Balance   int    `json:"balance"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
